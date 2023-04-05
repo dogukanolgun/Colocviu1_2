@@ -1,7 +1,9 @@
 package com.example.colocviu1_2
+
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -29,6 +31,14 @@ class MainActivity : AppCompatActivity() {
         allTermsTextView = findViewById(R.id.textView_allTerms)
         computeButton = findViewById(R.id.button_compute)
 
+        if (savedInstanceState != null) {
+            terms = savedInstanceState.getIntegerArrayList("terms")?.toMutableList() ?: mutableListOf()
+            lastComputedTerms = savedInstanceState.getIntegerArrayList("lastComputedTerms")?.toMutableList() ?: mutableListOf()
+            lastComputedSum = savedInstanceState.getInt("lastComputedSum", 0)
+
+            allTermsTextView.text = terms.joinToString(" + ")
+        }
+
         addTermButton.setOnClickListener {
             val term = nextTermEditText.text.toString().toIntOrNull()
 
@@ -50,6 +60,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putIntegerArrayList("terms", ArrayList(terms))
+        outState.putIntegerArrayList("lastComputedTerms", ArrayList(lastComputedTerms))
+        outState.putInt("lastComputedSum", lastComputedSum)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        terms = savedInstanceState.getIntegerArrayList("terms")?.toMutableList() ?: mutableListOf()
+        lastComputedTerms = savedInstanceState.getIntegerArrayList("lastComputedTerms")?.toMutableList() ?: mutableListOf()
+        lastComputedSum = savedInstanceState.getInt("lastComputedSum", 0)
+
+        allTermsTextView.text = terms.joinToString(" + ")
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -60,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
 
 
 
