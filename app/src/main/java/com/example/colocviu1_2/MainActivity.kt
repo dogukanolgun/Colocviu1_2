@@ -14,7 +14,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var allTermsTextView: TextView
     private lateinit var computeButton: Button
 
-    private val terms = mutableListOf<Int>()
+    private var terms = mutableListOf<Int>()
+    private var lastComputedTerms = mutableListOf<Int>()
+    private var lastComputedSum = 0
 
     private val REQUEST_CODE_COMPUTE_ACTIVITY = 1
 
@@ -38,9 +40,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         computeButton.setOnClickListener {
-            val intent = Intent(this, ComputeActivity::class.java)
-            intent.putIntegerArrayListExtra("terms", ArrayList(terms))
-            startActivityForResult(intent, REQUEST_CODE_COMPUTE_ACTIVITY)
+            if (terms == lastComputedTerms) {
+                Toast.makeText(this, "Sum: $lastComputedSum", Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, ComputeActivity::class.java)
+                intent.putIntegerArrayListExtra("terms", ArrayList(terms))
+                startActivityForResult(intent, REQUEST_CODE_COMPUTE_ACTIVITY)
+            }
         }
     }
 
@@ -48,24 +54,16 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_COMPUTE_ACTIVITY && resultCode == RESULT_OK) {
-            val sum = data?.getIntExtra("sum", 0) ?: 0
-            Toast.makeText(this, "Sum: $sum", Toast.LENGTH_SHORT).show()
+            lastComputedTerms = ArrayList(terms)
+            lastComputedSum = data?.getIntExtra("sum", 0) ?: 0
+            Toast.makeText(this, "Sum: $lastComputedSum", Toast.LENGTH_SHORT).show()
         }
     }
 }
 
 
-//import androidx.appcompat.app.AppCompatActivity
-//import android.os.Bundle
-//
-//class MainActivity : AppCompatActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//    }
-//}
 
-//
+
 //echo "# Colocviu1_2" >> README.md
 //git init
 //git add README.md
